@@ -16,6 +16,9 @@ class DAG
     @vertices = []
     @edges = []
     @mixin = options[:mixin]
+
+    @edge_cache_origin = {}
+    @edge_cache_dest = {}
   end
 
   def add_vertex(payload = {})
@@ -35,7 +38,16 @@ class DAG
       is_my_vertex?(destination)
     raise ArgumentError.new('A DAG must not have cycles') if origin == destination
     raise ArgumentError.new('A DAG must not have cycles') if destination.has_path_to?(origin)
-    Edge.new(origin, destination, properties).tap {|e| @edges << e }
+    Edge.new(origin, destination, properties).tap { |e| cache_edge(e) }
+  end
+
+  def cache_edge(edge)
+    @edges << edge
+
+    @edge_cache_origin[edge.origin] ||= []
+    @edge_cache_origin[edge.origin] << edge
+    @edge_cache_dest[edge.destination] ||= []
+    @edge_cache_dest[edge.destination] << edge
   end
 
   def subgraph(predecessors_of = [], successors_of = [])
@@ -89,4 +101,3 @@ class DAG
   end
 
 end
-

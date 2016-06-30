@@ -11,11 +11,11 @@ class DAG
     private :initialize
 
     def outgoing_edges
-      @dag.edges.select {|e| e.origin == self}
+      @dag.instance_variable_get(:@edge_cache_origin).fetch(self, [])
     end
 
     def incoming_edges
-      @dag.edges.select {|e| e.destination == self}
+      @dag.instance_variable_get(:@edge_cache_dest).fetch(self, [])
     end
 
     def predecessors
@@ -99,4 +99,3 @@ class DAG
   end
 
 end
-
