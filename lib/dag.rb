@@ -1,3 +1,5 @@
+require 'set'
+
 require_relative 'dag/vertex'
 
 class DAG
